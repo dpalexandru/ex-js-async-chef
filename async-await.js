@@ -14,8 +14,21 @@ async function fetchJson(url) {
 
 // funzione per recuperare la data con doppia chiama 
 async function getChefBirthday(id) {
-  const ricetta = await fetchJson(`${linkRicetta}${id}`)
-  console.log(ricetta.userId)
+  let ricetta;
+
+  try {
+    ricetta = await fetchJson(`${linkRicetta}${id}`);
+    console.log(ricetta);
+    if (ricetta.message) {
+      throw new Error("Id non esiste");
+
+    }
+  } catch (error) {
+    console.error("Errore nel recupero della ricetta:", error.message);
+    throw new Error("Impossibile recuperare la ricetta richiesta");
+    return null;
+  }
+
   const user = await fetchJson(`${linkUsers}${ricetta.userId}`)
   console.log(user.birthDate)
   const birthDate = user.birthDate
@@ -24,6 +37,6 @@ async function getChefBirthday(id) {
 }
 
 // uso funzione e gestione errore 
-getChefBirthday(9)
+getChefBirthday(111111111)
   .then(birthday => console.log("Data di nascita dello chef:", birthday))
   .catch(error => console.error("Errore:", error.message));
