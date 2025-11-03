@@ -6,35 +6,29 @@ const linkRicetta = "https://dummyjson.com/recipes/"
 const linkUsers = "https://dummyjson.com/users/"
 
 
-// dati in formato JSON da un URL
-async function fetchJson(url) {
-  const response = await fetch(url)
-  const obj = await response.json()
-  return obj;
-}
-
 // funzione per recuperare la data con doppia chiama 
 async function getChefBirthday(id) {
   let ricetta;
 
   try {
-    ricetta = await fetchJson(`${linkRicetta}${id}`);
+    const resRicetta = await fetch(`${linkRicetta}${id}`);
+    ricetta = await resRicetta.json();
+
     if (ricetta.message) {
       throw new Error("Id non esiste");
 
     }
   } catch (error) {
-    throw new Error("Impossibile recuperare la ricetta richiesta");
+    throw new Error(`Impossibile recuperare la ricetta richiesta con id ${id}`);
   }
+  const resUser = await fetch(`${linkUsers}${ricetta.userId}`);
+  const user = await resUser.json();
 
-  const user = await fetchJson(`${linkUsers}${ricetta.userId}`)
-  const birthDate = user.birthDate
-  return birthDate
-
+  return user.birthDate;
 }
 
 // uso funzione e gestione errore 
-getChefBirthday(4)
+getChefBirthday(88888888)
   .then(birthday => {
     // Formatto la data 
     const formatted = dayjs(birthday).format("DD/MM/YYYY");
